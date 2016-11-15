@@ -13,7 +13,6 @@ namespace Poker
 
     class Hand : IComparable
     {
-        Card[] cards;
         Dictionary<int, int> counts;
 
         public Hand(Card[] cards)
@@ -26,7 +25,7 @@ namespace Poker
         { // same suit
             foreach (Card d in cards)
             {
-                if (d.getSuit() != cards[0].getSuit())
+                if (d.suit != cards[0].suit)
                     return false;
             }
             return true;
@@ -39,8 +38,8 @@ namespace Poker
 
         bool IsRoyalFlush()
         { // same suit
-            return (IsStraightFlush() && cards[0].getRank() == 10
-                && cards[cards.Length - 1].getRank() == 14);
+            return (IsStraightFlush() && cards[0].rank == 10
+                && cards[cards.Length - 1].rank == 14);
         }
 
         bool IsFullHouse()
@@ -76,7 +75,7 @@ namespace Poker
         { // sequential
             for (int i = 1; i < cards.Length; i++)
             {
-                if (cards[i].getRank() != cards[i - 1].getRank() + 1)
+                if (cards[i].rank != cards[i - 1].rank + 1)
                     return false;
             }
             return true;
@@ -87,10 +86,10 @@ namespace Poker
             Array.Sort(cards);
             foreach (Card d in cards)
             {
-                if (counts.ContainsKey(d.getRank()))
-                    counts[d.getRank()] += 1;
+                if (counts.ContainsKey(d.rank))
+                    counts[d.rank] += 1;
                 else
-                    counts.Add(d.getRank(), 1);
+                    counts.Add(d.rank, 1);
             }
             Rank type = Rank.NONE;
 
@@ -116,7 +115,7 @@ namespace Poker
             return type;
         }
 
-        public Card[] getHand() { return cards; }
+        public Card[] cards { get; }
 
         public int CompareTo(object obj)
         {
@@ -130,7 +129,7 @@ namespace Poker
 
             else
             { // check for tie breaker
-                Card[] pCards = player.getHand();
+                Card[] pCards = player.cards;
 
                 Array.Sort(cards);
                 Array.Sort(pCards);
