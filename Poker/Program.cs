@@ -7,26 +7,30 @@ namespace Poker
 
     class Program
     {
-        static string[] deck = new string[] {
-            "H2", "S2","C2", "D2", "H3", "S3", "C3", "D3", "H4", "S4", "C4", "D4", "H5",
-            "S5", "C5", "D5", "H6", "S6", "C6", "D6", "H7", "S7", "C7", "D7", "H8", "S8",
-            "C8", "D8", "H9", "S9", "C9", "D9", "HA", "SA", "CA", "DA", "HJ", "SJ", "CJ",
-            "DJ", "HK", "SK", "CK", "DK", "HQ", "SQ", "CQ", "DQ", "HT", "ST", "CT", "DT"
-        };
-
+        static HashSet<string> deckCards;
         static int deal;
+
+        static void Shuffle() {
+            deckCards = new HashSet<string>();
+
+            char[] suit = { 'D', 'H', 'S', 'C' };
+            char[] rank = { '2', '3', '4', '5', '6', '7', '8', '9', 'T', 'J', 'Q', 'K', 'A' };
+
+            foreach (char s in suit)
+                foreach (char r in rank)
+                    deckCards.Add(s + "" + r + "");
+        }
+
         static Hand DealHand(string args)
         {
-
-            HashSet<string> deckCards = new HashSet<string> (deck);
             Card[] h = new Card[deal];
 
             int i = 0;
-            string[] hand = args.TrimEnd().Split(',');
+            string[] hand = args.Split(',');
 
             foreach (string s in hand)
             {
-                if (s != "")
+                if (deckCards.Contains(s))
                 {
                     h[i] = new Card(s);
                     i++;
@@ -51,22 +55,32 @@ namespace Poker
         {
             // get hand using args
 
+            deal = args.Length == 0 ? 5 : int.Parse(args[0]);
+   
+            string hand1 = args.Length < 2 ? "" : args[1].ToUpper();
+            string hand2 = args.Length < 3 ? "" : args[2].ToUpper();
 
-            deal = int.Parse(args[0]);
-
-            string hand1 = args[1].ToUpper();
-            string hand2 = args[2].ToUpper();
+            Shuffle();
 
             Hand h1 = DealHand(hand1);
             Hand h2 = DealHand(hand2);
 
+            Console.Write("First player cards: ");
             for (int i = 0; i < deal; i++)
-                Console.Write(((char)h1.cards[i].suit) + "" + h1.cards[i].rank + ",");
+                Console.Write(((char)h1.cards[i].suit) + "" + h1.cards[i].rank + " ");
 
-            Console.WriteLine();
+            Console.Write("\nSecond Player cards: ");
 
             for (int i = 0; i < deal; i++)
-                Console.Write(((char)h2.cards[i].suit) + "" + h2.cards[i].rank + ",");
+                Console.Write(((char)h2.cards[i].suit) + "" + h2.cards[i].rank + " ");
+
+            int winner = h1.CompareTo(h2);
+            string w = "No winner";
+
+            if (winner > 0) w = "Player 1 is the winner: " + h1.CheckType();
+            if (winner < 0) w = "Player 2 is the winner: " + h2.CheckType();
+
+            Console.Write("\n" + w.Replace("NONE", "HIGHER_CARD"));
 
             Console.Read();
 

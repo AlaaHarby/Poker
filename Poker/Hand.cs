@@ -44,7 +44,7 @@ namespace Poker
 
         bool IsFullHouse()
         {
-            return IsThreeOfKind() && IsPair();
+            return IsThreeOfKind() && IsTwoPairs();
         }
 
         bool IsFourOfKind()
@@ -112,6 +112,7 @@ namespace Poker
             if (IsRoyalFlush())
                 type = Rank.ROYAL_FLUSH;
 
+            counts.Clear();
             return type;
         }
 
